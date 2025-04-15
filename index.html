@@ -18,8 +18,7 @@
 
   <script>
     async function fetchExcelAndRender() {
-      const url = "https://github.com/mehmetdogan12/TurkiyeDerinParfum/raw/main/Muadil.xlsx";
-
+      const url = const url = "https://github.com/mehmetdogan12/TurkiyeDerinParfum/raw/main/Muadil.xlsx";
       const response = await fetch(url);
       const arrayBuffer = await response.arrayBuffer();
       const data = new Uint8Array(arrayBuffer);
