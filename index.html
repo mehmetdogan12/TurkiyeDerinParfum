@@ -1,11 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Excel Tablo Görüntüleyici</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+    th { background-color: #eee; }
+  </style>
 </head>
 <body>
-  
+  <h1>Excel Tablosu</h1>
+  <div id="excelData">Yükleniyor...</div>
+
+  <script>
+    async function fetchExcelAndRender() {
+      const url = "https://github.com/kullaniciadi/excel-tablo/raw/main/veriler.xlsx";
+
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const data = new Uint8Array(arrayBuffer);
+      const workbook = XLSX.read(data, { type: "array" });
+
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const html = XLSX.utils.sheet_to_html(sheet);
+
+      document.getElementById("excelData").innerHTML = html;
+    }
+
+    fetchExcelAndRender();
+  </script>
 </body>
 </html>
