@@ -23,7 +23,7 @@
       background-color: #1e1e1e;
       margin-top: 20px;
       border-radius: 8px;
-      overflow: hidden;
+      overflow-x: auto;
     }
 
     th, td {
@@ -84,27 +84,35 @@
 
   Papa.parse(sheetURL, {
     download: true,
-    header: true,
     complete: function(results) {
       const data = results.data;
+
       const table = document.getElementById("excelTable");
 
-      // Tablo Başlığı
-      const headers = Object.keys(data[0]);
+      // İlk 2 satırı ayrı al: 1. satır ana başlık, 2. satır alt başlık
+      const header1 = data[0];
+      const header2 = data[1];
+
       let tableHTML = "<thead><tr>";
-      headers.forEach(header => {
+      header1.forEach(header => {
         tableHTML += `<th>${header}</th>`;
+      });
+      tableHTML += "</tr><tr>";
+      header2.forEach(subheader => {
+        tableHTML += `<th>${subheader}</th>`;
       });
       tableHTML += "</tr></thead><tbody>";
 
-      // Satırlar
-      data.forEach(row => {
+      // Geri kalan satırlar veri
+      for (let i = 2; i < data.length; i++) {
+        const row = data[i];
         tableHTML += "<tr>";
-        headers.forEach(header => {
-          tableHTML += `<td data-label="${header}">${row[header] || ""}</td>`;
+        row.forEach((cell, j) => {
+          const label = `${header1[j]} - ${header2[j]}`;
+          tableHTML += `<td data-label="${label}">${cell}</td>`;
         });
         tableHTML += "</tr>";
-      });
+      }
 
       tableHTML += "</tbody>";
       table.innerHTML = tableHTML;
