@@ -3,122 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Parfüm Tablosu</title>
+  <title>Parfüm PDF Görünüm</title>
   <style>
     body {
       background-color: #121212;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
+      padding: 20px;
     }
 
-    table {
+    iframe {
       width: 100%;
-      border-collapse: collapse;
-      background-color: #1e1e1e;
-      margin-top: 20px;
-      border-radius: 8px;
-      overflow-x: auto;
-    }
-
-    th, td {
-      border: 1px solid #333;
-      padding: 12px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #333;
-    }
-
-    tr:nth-child(even) {
-      background-color: #2a2a2a;
-    }
-
-    @media screen and (max-width: 768px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-
-      thead {
-        display: none;
-      }
-
-      td {
-        border: none;
-        border-bottom: 1px solid #444;
-        padding: 10px;
-        position: relative;
-        padding-left: 50%;
-        background-color: #1e1e1e;
-      }
-
-      td::before {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        width: 45%;
-        white-space: nowrap;
-        font-weight: bold;
-        color: #ccc;
-        content: attr(data-label);
-      }
+      height: 100vh;
+      border: none;
     }
   </style>
 </head>
 <body>
 
-<h2>Parfüm Tablosu</h2>
-<table id="excelTable"></table>
+<h2>Orijinal Excel'in PDF Görünümü</h2>
 
-<!-- PapaParse CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
-<script>
-  const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vThhbPUZxBX3DF2s7y7o-2K65VHhBfbPgmk6-qlOapKlZa1auCabmQFn1MtC3QbNg/pub?output=csv";
-
-  Papa.parse(sheetURL, {
-    download: true,
-    complete: function(results) {
-      const data = results.data;
-
-      const table = document.getElementById("excelTable");
-
-      // İlk 2 satırı ayrı al: 1. satır ana başlık, 2. satır alt başlık
-      const header1 = data[0];
-      const header2 = data[1];
-
-      let tableHTML = "<thead><tr>";
-      header1.forEach(header => {
-        tableHTML += `<th>${header}</th>`;
-      });
-      tableHTML += "</tr><tr>";
-      header2.forEach(subheader => {
-        tableHTML += `<th>${subheader}</th>`;
-      });
-      tableHTML += "</tr></thead><tbody>";
-
-      // Geri kalan satırlar veri
-      for (let i = 2; i < data.length; i++) {
-        const row = data[i];
-        tableHTML += "<tr>";
-        row.forEach((cell, j) => {
-          const label = `${header1[j]} - ${header2[j]}`;
-          tableHTML += `<td data-label="${label}">${cell}</td>`;
-        });
-        tableHTML += "</tr>";
-      }
-
-      tableHTML += "</tbody>";
-      table.innerHTML = tableHTML;
-    }
-  });
-</script>
+<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vThhbPUZxBX3DF2s7y7o-2K65VHhBfbPgmk6-qlOapKlZa1auCabmQFn1MtC3QbNg/pub?output=pdf"></iframe>
 
 </body>
 </html>
