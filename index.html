@@ -2,9 +2,66 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Excel Tablosu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excel Tablosu Görüntüleyici</title>
   <style>
-    /* Yukarıdaki CSS kodları buraya gelecek */
+    /* Genel stil */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block; /* Sayfanın kenarlarına taşmasını engellemek için */
+      margin: 0 auto;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      white-space: nowrap; /* Hücrelerin metinleri satırları bozmasın */
+    }
+
+    td {
+      white-space: nowrap; /* Aynı şekilde hücre metinleri */
+      min-width: 100px; /* Hücreler arasındaki boşluğu düzenle */
+    }
+
+    /* Mobil uyumlu tablolar için media query */
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto; /* Yatay kaydırmayı etkinleştirir */
+        -webkit-overflow-scrolling: touch;
+        width: 100%; /* Tam genişlik */
+      }
+
+      th, td {
+        font-size: 12px; /* Küçük ekranlar için daha küçük yazı boyutu */
+      }
+    }
+
+    /* Daha küçük ekranlar için ekstra düzenleme */
+    @media (max-width: 480px) {
+      th, td {
+        font-size: 10px; /* Çok küçük ekranlar için yazı boyutunu daha da küçült */
+        padding: 8px; /* Hücrelerdeki boşlukları azalt */
+      }
+
+      table {
+        font-size: 10px; /* Tablo fontunu küçült */
+      }
+    }
   </style>
 </head>
 <body>
