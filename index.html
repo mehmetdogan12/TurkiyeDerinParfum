@@ -3,33 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Parfüm PDF Görünüm</title>
+  <title>Excel Görüntüleyici</title>
   <style>
     body {
       background-color: #121212;
       color: white;
       font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    h2 {
-      text-align: center;
       padding: 20px;
     }
-
-    iframe {
+    table {
+      border-collapse: collapse;
       width: 100%;
-      height: 100vh;
-      border: none;
+      overflow-x: auto;
+      background-color: #1e1e1e;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #2e2e2e;
+    }
+    tr:nth-child(even) {
+      background-color: #2a2a2a;
+    }
+    @media screen and (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead {
+        display: none;
+      }
+      td {
+        position: relative;
+        padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #444;
+      }
+      td::before {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: #aaa;
+        font-weight: bold;
+        white-space: nowrap;
+        content: attr(data-label);
+      }
     }
   </style>
 </head>
 <body>
+  <h2>Excel Tablosu (Muadil.xlsx)</h2>
+  <input type="file" id="upload" accept=".xlsx" />
+  <div id="excelData"></div>
 
-<h2>Orijinal Excel'in PDF Görünümü</h2>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script>
+    async function loadExcel() {
+      const response = await fetch('Muadil.xlsx');
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vThhbPUZxBX3DF2s7y7o-2K65VHhBfbPgmk6-qlOapKlZa1auCabmQFn1MtC3QbNg/pub?output=pdf"></iframe>
+      let table = '<table><thead><tr>';
+      json[0].forEach(cell => {
+        table += `<th>${cell}</th>`;
+      });
+      table += '</tr></thead><tbody>';
 
+      for (let i = 1; i < json.length; i++) {
+        table += '<tr>';
+        json[i].forEach((cell, j) => {
+          table += `<td data-label="${json[0][j]}">${cell || ''}</td>`;
+        });
+        table += '</tr>';
+      }
+
+      table += '</tbody></table>';
+      document.getElementById('excelData').innerHTML = table;
+    }
+
+    loadExcel();
+  </script>
 </body>
 </html>
