@@ -1,99 +1,113 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Excel Tablosu Görüntüleyici</title>
   <style>
-    /* Genel stil */
+    /* Koyu Tema ve Genel Stil */
     body {
       font-family: Arial, sans-serif;
+      background-color: #2e2e2e;
+      color: #f1f1f1;
       margin: 0;
       padding: 20px;
-      background-color: #f4f4f4;
+      text-align: center;
+    }
+
+    h1 {
+      color: #f1f1f1;
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
-      overflow-x: auto;
-      display: block; /* Sayfanın kenarlarına taşmasını engellemek için */
-      margin: 0 auto;
+      margin: 20px auto;
+      background-color: #333;
+      color: #f1f1f1;
+      border-radius: 8px;
+      overflow: hidden;
     }
 
     th, td {
-      padding: 10px;
+      padding: 12px 20px;
       text-align: left;
-      border: 1px solid #ddd;
+      border: 1px solid #444;
     }
 
     th {
-      background-color: #f2f2f2;
-      white-space: nowrap; /* Hücrelerin metinleri satırları bozmasın */
+      background-color: #555;
     }
 
-    td {
-      white-space: nowrap; /* Aynı şekilde hücre metinleri */
-      min-width: 100px; /* Hücreler arasındaki boşluğu düzenle */
+    tr:nth-child(even) {
+      background-color: #444;
     }
 
-    /* Mobil uyumlu tablolar için media query */
+    tr:hover {
+      background-color: #666;
+    }
+
+    /* Responsive Tasarım */
     @media (max-width: 768px) {
       table {
+        width: 100%;
         display: block;
-        overflow-x: auto; /* Yatay kaydırmayı etkinleştirir */
+        overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        width: 100%; /* Tam genişlik */
       }
 
       th, td {
-        font-size: 12px; /* Küçük ekranlar için daha küçük yazı boyutu */
+        font-size: 14px;
+      }
+
+      td {
+        min-width: 120px;
       }
     }
 
-    /* Daha küçük ekranlar için ekstra düzenleme */
+    /* Küçük ekranlar için ekstra düzenleme */
     @media (max-width: 480px) {
       th, td {
-        font-size: 10px; /* Çok küçük ekranlar için yazı boyutunu daha da küçült */
-        padding: 8px; /* Hücrelerdeki boşlukları azalt */
-      }
-
-      table {
-        font-size: 10px; /* Tablo fontunu küçült */
+        font-size: 12px;
+        padding: 10px;
       }
     }
+
   </style>
 </head>
 <body>
   <h1>Excel Tablosu Görüntüleyici</h1>
+  
   <div id="excelData">
     <!-- Tablo burada yüklenecek -->
   </div>
 
   <script>
     async function fetchCSVAndRender() {
-      const url = "https://docs.google.com/spreadsheets/d/1zL20NUHqIMQ0PweI2xSLFl3qTO7fdqJO/export?format=csv";
+      const url = "https://docs.google.com/spreadsheets/d/1zL20NUHqIMQ0PweI2xSLFl3qTO7fdqJO/export?format=csv"; // Google Sheets'ten CSV verisi al
       const response = await fetch(url);
-      const csvText = await response.text();
+      const csvText = await response.text(); // CSV verisini al
 
-      const rows = csvText.trim().split('\n').map(row => row.split(','));
-      const table = document.createElement('table');
+      const rows = csvText.trim().split('\n').map(row => row.split(',')); // CSV'yi satır ve hücrelere ayır
+      const table = document.createElement('table'); // Tablo oluştur
 
+      // Tabloyu oluşturma işlemi
       rows.forEach((row, i) => {
         const tr = document.createElement('tr');
         row.forEach(cell => {
-          const td = document.createElement(i === 0 ? 'th' : 'td');
+          const td = document.createElement(i === 0 ? 'th' : 'td'); // Başlık satırlarını 'th' yap
           td.textContent = cell;
           tr.appendChild(td);
         });
         table.appendChild(tr);
       });
 
-      document.getElementById("excelData").innerHTML = "";
-      document.getElementById("excelData").appendChild(table);
+      // Tabloyu sayfaya ekleme
+      document.getElementById("excelData").innerHTML = ""; // Eski tabloyu temizle
+      document.getElementById("excelData").appendChild(table); // Yeni tabloyu ekle
     }
 
-    fetchCSVAndRender();
+    fetchCSVAndRender(); // Verileri al ve tabloyu oluştur
   </script>
 </body>
 </html>
