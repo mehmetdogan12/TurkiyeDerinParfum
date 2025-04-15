@@ -66,6 +66,7 @@
         white-space: nowrap;
         font-weight: bold;
         color: #ccc;
+        content: attr(data-label);
       }
     }
   </style>
@@ -75,44 +76,40 @@
 <h2>Parfüm Tablosu</h2>
 <table id="excelTable"></table>
 
+<!-- PapaParse CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
 <script>
-  // Google Sheets yayın kimliği (senin verdiğin linkten alınan)
   const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vThhbPUZxBX3DF2s7y7o-2K65VHhBfbPgmk6-qlOapKlZa1auCabmQFn1MtC3QbNg/pub?output=csv";
 
-  fetch(sheetURL)
-    .then(response => response.text())
-    .then(data => {
-      const rows = data.split("\n").map(row => row.split(","));
+  Papa.parse(sheetURL, {
+    download: true,
+    header: true,
+    complete: function(results) {
+      const data = results.data;
       const table = document.getElementById("excelTable");
 
+      // Tablo Başlığı
+      const headers = Object.keys(data[0]);
       let tableHTML = "<thead><tr>";
-      rows[0].forEach(header => {
+      headers.forEach(header => {
         tableHTML += `<th>${header}</th>`;
       });
       tableHTML += "</tr></thead><tbody>";
 
-      for (let i = 1; i < rows.length; i++) {
+      // Satırlar
+      data.forEach(row => {
         tableHTML += "<tr>";
-        rows[i].forEach(cell => {
-          tableHTML += `<td>${cell}</td>`;
+        headers.forEach(header => {
+          tableHTML += `<td data-label="${header}">${row[header] || ""}</td>`;
         });
         tableHTML += "</tr>";
-      }
+      });
 
       tableHTML += "</tbody>";
       table.innerHTML = tableHTML;
-
-      // Mobilde td::before için başlık isimleri ekle
-      const headers = rows[0];
-      document.querySelectorAll("tbody tr").forEach((tr) => {
-        tr.querySelectorAll("td").forEach((td, i) => {
-          td.setAttribute("data-label", headers[i]);
-          td.style.setProperty("--label", `"${headers[i]}"`);
-          td.innerHTML = `<strong>${headers[i]}:</strong> ${td.innerHTML}`;
-        });
-      });
-    })
-    .catch(err => console.error("Veri alınamadı:", err));
+    }
+  });
 </script>
 
 </body>
