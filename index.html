@@ -1,113 +1,119 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Excel Tablosu Görüntüleyici</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parfüm Tablosu</title>
   <style>
-    /* Koyu Tema ve Genel Stil */
     body {
+      background-color: #121212;
+      color: #ffffff;
       font-family: Arial, sans-serif;
-      background-color: #2e2e2e;
-      color: #f1f1f1;
-      margin: 0;
       padding: 20px;
-      text-align: center;
     }
 
-    h1 {
-      color: #f1f1f1;
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
     }
 
     table {
-      border-collapse: collapse;
       width: 100%;
-      margin: 20px auto;
-      background-color: #333;
-      color: #f1f1f1;
+      border-collapse: collapse;
+      background-color: #1e1e1e;
+      margin-top: 20px;
       border-radius: 8px;
       overflow: hidden;
     }
 
     th, td {
-      padding: 12px 20px;
+      border: 1px solid #333;
+      padding: 12px;
       text-align: left;
-      border: 1px solid #444;
     }
 
     th {
-      background-color: #555;
+      background-color: #333;
     }
 
     tr:nth-child(even) {
-      background-color: #444;
+      background-color: #2a2a2a;
     }
 
-    tr:hover {
-      background-color: #666;
-    }
-
-    /* Responsive Tasarım */
-    @media (max-width: 768px) {
-      table {
-        width: 100%;
+    @media screen and (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
         display: block;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
       }
 
-      th, td {
-        font-size: 14px;
+      thead {
+        display: none;
       }
 
       td {
-        min-width: 120px;
-      }
-    }
-
-    /* Küçük ekranlar için ekstra düzenleme */
-    @media (max-width: 480px) {
-      th, td {
-        font-size: 12px;
+        border: none;
+        border-bottom: 1px solid #444;
         padding: 10px;
+        position: relative;
+        padding-left: 50%;
+        background-color: #1e1e1e;
+      }
+
+      td::before {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #ccc;
       }
     }
-
   </style>
 </head>
 <body>
-  <h1>Excel Tablosu Görüntüleyici</h1>
-  
-  <div id="excelData">
-    <!-- Tablo burada yüklenecek -->
-  </div>
 
-  <script>
-    async function fetchCSVAndRender() {
-      const url = "https://docs.google.com/spreadsheets/d/1zL20NUHqIMQ0PweI2xSLFl3qTO7fdqJO/export?format=csv"; // Google Sheets'ten CSV verisi al
-      const response = await fetch(url);
-      const csvText = await response.text(); // CSV verisini al
+<h2>Parfüm Tablosu</h2>
+<table id="excelTable"></table>
 
-      const rows = csvText.trim().split('\n').map(row => row.split(',')); // CSV'yi satır ve hücrelere ayır
-      const table = document.createElement('table'); // Tablo oluştur
+<script>
+  // Google Sheets yayın kimliği (senin verdiğin linkten alınan)
+  const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vThhbPUZxBX3DF2s7y7o-2K65VHhBfbPgmk6-qlOapKlZa1auCabmQFn1MtC3QbNg/pub?output=csv";
 
-      // Tabloyu oluşturma işlemi
-      rows.forEach((row, i) => {
-        const tr = document.createElement('tr');
-        row.forEach(cell => {
-          const td = document.createElement(i === 0 ? 'th' : 'td'); // Başlık satırlarını 'th' yap
-          td.textContent = cell;
-          tr.appendChild(td);
-        });
-        table.appendChild(tr);
+  fetch(sheetURL)
+    .then(response => response.text())
+    .then(data => {
+      const rows = data.split("\n").map(row => row.split(","));
+      const table = document.getElementById("excelTable");
+
+      let tableHTML = "<thead><tr>";
+      rows[0].forEach(header => {
+        tableHTML += `<th>${header}</th>`;
       });
+      tableHTML += "</tr></thead><tbody>";
 
-      // Tabloyu sayfaya ekleme
-      document.getElementById("excelData").innerHTML = ""; // Eski tabloyu temizle
-      document.getElementById("excelData").appendChild(table); // Yeni tabloyu ekle
-    }
+      for (let i = 1; i < rows.length; i++) {
+        tableHTML += "<tr>";
+        rows[i].forEach(cell => {
+          tableHTML += `<td>${cell}</td>`;
+        });
+        tableHTML += "</tr>";
+      }
 
-    fetchCSVAndRender(); // Verileri al ve tabloyu oluştur
-  </script>
+      tableHTML += "</tbody>";
+      table.innerHTML = tableHTML;
+
+      // Mobilde td::before için başlık isimleri ekle
+      const headers = rows[0];
+      document.querySelectorAll("tbody tr").forEach((tr) => {
+        tr.querySelectorAll("td").forEach((td, i) => {
+          td.setAttribute("data-label", headers[i]);
+          td.style.setProperty("--label", `"${headers[i]}"`);
+          td.innerHTML = `<strong>${headers[i]}:</strong> ${td.innerHTML}`;
+        });
+      });
+    })
+    .catch(err => console.error("Veri alınamadı:", err));
+</script>
+
 </body>
 </html>
